@@ -75,7 +75,12 @@ pre,
 .ecosystem-links a {
   color: var(--text-dim);
   text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   transition: color 0.15s ease;
+}
+.ecosystem-links .eco-sep {
+  color: var(--border-strong, #2A3542);
 }
 
 .ecosystem-links a:hover {

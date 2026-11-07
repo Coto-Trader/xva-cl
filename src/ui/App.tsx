@@ -105,11 +105,11 @@ export const App: React.FC = () => {
               <a href="https://segundaopinion.cl" target="_blank" rel="noreferrer">
                 SegundaOpinión ↗
               </a>
-              <span>·</span>
+              <span className="eco-sep">|</span>
               <a href="https://tradeai.cl" target="_blank" rel="noreferrer">
                 Suite TradeAI ↗
               </a>
-              <span>·</span>
+              <span className="eco-sep">|</span>
               <a href="https://xva.cl" className="active-site">
                 XVA
               </a>
