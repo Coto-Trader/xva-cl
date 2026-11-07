@@ -208,7 +208,13 @@ export function createCSA(partial: Partial<CSA> & { id?: string }): CSA {
  * Creates and validates a Trade (CCS_UF_CLP, IRS, FX_FORWARD).
  */
 export function createTrade(
-  partial: Partial<CCSUFCLPTrade> & { id?: string; counterpartyId: string; product?: AnyTrade['product'] }
+  partial: Omit<Partial<CCSUFCLPTrade>, 'product'> &
+    Omit<Partial<IRSTrade>, 'product'> &
+    Omit<Partial<FXForwardTrade>, 'product'> & {
+      id?: string;
+      counterpartyId: string;
+      product?: AnyTrade['product'];
+    }
 ): AnyTrade {
   const id = (partial.id ?? `trd_${Date.now()}`).trim();
   const counterpartyId = (partial.counterpartyId ?? '').trim();
