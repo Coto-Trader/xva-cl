@@ -9,7 +9,7 @@ import {
   survivalProbability,
 } from '../src/engine/credit';
 
-describe('Fase 2 — Credit & Hazard Bootstrap (FR-2, Gregory Cap. 12)', () => {
+describe('Fase 2 — Credit & Hazard Bootstrap (FR-2, Cap. 12)', () => {
   it('reproduces hazard rates and marginal PDs from credit.py / demo.py within 1e-6 (FR-2.1 acceptance)', () => {
     // From demo.py:
     // COUNTERPARTY_CDS_SPREAD = 0.0150, COUNTERPARTY_RECOVERY = 0.40 -> hazard_cpty = 0.025 (2.5000%)
@@ -64,7 +64,7 @@ describe('Fase 2 — Credit & Hazard Bootstrap (FR-2, Gregory Cap. 12)', () => {
     );
   });
 
-  it('builds a valid proxy credit curve for illiquid counterparties by rating/sector/region (FR-2.2, Gregory Cap. 12)', () => {
+  it('builds a valid proxy credit curve for illiquid counterparties by rating/sector/region (FR-2.2, Cap. 12)', () => {
     const cpty = createCounterparty({
       id: 'cpty_illiquid',
       name: 'Agricola del Valle S.A.',

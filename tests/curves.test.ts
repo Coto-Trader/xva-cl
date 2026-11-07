@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { sampleMarketCurves, ZeroCurve } from '../src/engine/curves';
 
-describe('Fase 1 — ZeroCurve PCHIP & CurveSet (FR-1, Gregory Cap. 13)', () => {
+describe('Fase 1 — ZeroCurve PCHIP & CurveSet (FR-1, Cap. 13)', () => {
   it('reproduces sample_market_curves() discount factors and PCHIP mid-bucket rates from curve_builder.py within 1e-6', () => {
     const curves = sampleMarketCurves();
 
@@ -73,7 +73,7 @@ describe('Fase 1 — ZeroCurve PCHIP & CurveSet (FR-1, Gregory Cap. 13)', () => 
     expect(() => new ZeroCurve([1, 1], [0.05, 0.05])).toThrow(/strictly increasing/);
   });
 
-  it('selects cheapest-to-deliver collateral curve based on highest yield (Gregory Cap. 13)', () => {
+  it('selects cheapest-to-deliver collateral curve based on highest yield (Cap. 13)', () => {
     const curves = sampleMarketCurves();
     expect(curves.selectCheapestToDeliverCurve(['UF', 'CLP', 'USD'])).toBe('CAMARA_CLP');
     expect(curves.selectCheapestToDeliverCurve(['UF', 'USD'])).toBe('SOFR');

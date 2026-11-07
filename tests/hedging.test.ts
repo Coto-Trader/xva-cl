@@ -17,7 +17,7 @@ import {
   interpolateQuickSens,
 } from '../src/engine/sensitivities';
 
-describe('Fase 7 — Sensitivities (AAD/Analytical vs FD, QuickSens 3D Grid, XVA Greeks) & Hedging Advisor (FR-6, Gregory Cap. 12, 14, 18)', () => {
+describe('Fase 7 — Sensitivities (AAD/Analytical vs FD, QuickSens 3D Grid, XVA Greeks) & Hedging Advisor (FR-6, Cap. 12, 14, 18)', () => {
   const curves = sampleMarketCurves();
 
   it('reproduces sensitivities/aad.py: analytical zero-rate deltas match central finite differences within 1e-6', () => {
@@ -85,7 +85,7 @@ describe('Fase 7 — Sensitivities (AAD/Analytical vs FD, QuickSens 3D Grid, XVA
     expect(carryForced.carry_bps).toBeCloseTo(-400.0, 6);
   });
 
-  it('FR-6 Acceptance: computes XVA Greeks and when Vega > 0 recommends "Vender vega" with Gregory chapter citation', () => {
+  it('FR-6 Acceptance: computes XVA Greeks and when Vega > 0 recommends "Vender vega" with  chapter citation', () => {
     const greeks = computeXvaGreeks({
       curves,
       notionalUF: 500_000,

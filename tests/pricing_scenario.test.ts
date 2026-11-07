@@ -10,7 +10,7 @@ import {
 } from '../src/engine/pricing';
 import { generateMonteCarloScenarios } from '../src/engine/scenario';
 
-describe('Fase 3 — Pricing & Monte Carlo Scenarios (FR-3.1, NFR-3, Gregory Cap. 7 & 10)', () => {
+describe('Fase 3 — Pricing & Monte Carlo Scenarios (FR-3.1, NFR-3, Cap. 7 & 10)', () => {
   const curves = sampleMarketCurves();
   const market: MarketEnv = {
     asOf: '2026-11-07',
@@ -70,7 +70,7 @@ describe('Fase 3 — Pricing & Monte Carlo Scenarios (FR-3.1, NFR-3, Gregory Cap
     expect(Math.abs(mcEE5Y - expected5Y) / expected5Y).toBeLessThan(0.035);
   });
 
-  it('models ageing / roll-off (MTM = 0 after maturity) and cashflow pricing (Gregory Cap. 7)', () => {
+  it('models ageing / roll-off (MTM = 0 after maturity) and cashflow pricing (Cap. 7)', () => {
     const shortCcs = createTrade({
       id: 'ccs_3y',
       counterpartyId: 'cpty_1',

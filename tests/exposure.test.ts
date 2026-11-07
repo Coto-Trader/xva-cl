@@ -16,7 +16,7 @@ import {
   simulateNettingSetExposure,
 } from '../src/engine/exposure';
 
-describe('Fase 4 — Exposure Engine: Netting, CSA (MPOR, Threshold, MTA, Segregated IM), EE/ENE/PFE & Settlement Spike (FR-3.2, FR-4, Gregory Cap. 6, 7, 11)', () => {
+describe('Fase 4 — Exposure Engine: Netting, CSA (MPOR, Threshold, MTA, Segregated IM), EE/ENE/PFE & Settlement Spike (FR-3.2, FR-4, Cap. 6, 7, 11)', () => {
   const curves = sampleMarketCurves();
   const market: MarketEnv = {
     asOf: '2026-11-07',
@@ -94,7 +94,7 @@ describe('Fase 4 — Exposure Engine: Netting, CSA (MPOR, Threshold, MTA, Segreg
     expect(run2.profile.eepe).toBe(profile.eepe);
   });
 
-  it('Demonstrates netting benefit: two offsetting trades in a Netting Set have lower EPE than standalone (FR-4.1, Gregory Cap. 6)', () => {
+  it('Demonstrates netting benefit: two offsetting trades in a Netting Set have lower EPE than standalone (FR-4.1, Cap. 6)', () => {
     const tRec = createTrade({
       id: 'ccs_rec',
       counterpartyId: 'cpty_1',
@@ -123,7 +123,7 @@ describe('Fase 4 — Exposure Engine: Netting, CSA (MPOR, Threshold, MTA, Segreg
     expect(netted.profile.epe).toBeCloseTo(standaloneRec.profile.epe - standalonePay.profile.epe, 4);
   });
 
-  it('verifies segregated IM reduces positive exposure without increasing ENE (Gregory Cap. 11 & Cap. 15)', () => {
+  it('verifies segregated IM reduces positive exposure without increasing ENE (Cap. 11 & Cap. 15)', () => {
     const times = [0.5, 1.0];
     const paths = [
       [100, 150],

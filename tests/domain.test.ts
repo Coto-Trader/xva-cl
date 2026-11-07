@@ -10,7 +10,7 @@ import {
   validatePortfolio,
 } from '../src/domain';
 
-describe('Fase 0 — Domain Model & Builder (Gregory Cap. 5, 6, 11, 12, 13, 14, 15)', () => {
+describe('Fase 0 — Domain Model & Builder (Cap. 5, 6, 11, 12, 13, 14, 15)', () => {
   describe('createCounterparty (FR-2.2 & FR-7.1)', () => {
     it('creates a valid counterparty with a direct CDS curve', () => {
       const cpty = createCounterparty({
@@ -33,7 +33,7 @@ describe('Fase 0 — Domain Model & Builder (Gregory Cap. 5, 6, 11, 12, 13, 14, 
       expect(cpty.proxyKey).toBeUndefined();
     });
 
-    it('creates a valid illiquid counterparty using a ProxyKey (Gregory Cap. 12)', () => {
+    it('creates a valid illiquid counterparty using a ProxyKey (Cap. 12)', () => {
       const cpty = createCounterparty({
         id: 'cpty_corp_b',
         name: 'Inmobiliaria Cordillera S.A.',
@@ -67,7 +67,7 @@ describe('Fase 0 — Domain Model & Builder (Gregory Cap. 5, 6, 11, 12, 13, 14, 
           region: 'Chile',
           recoveryRate: 0.40,
         })
-      ).toThrow(/Gregory Cap\. 12/);
+      ).toThrow(/Cap\. 12/);
     });
 
     it('rejects invalid recoveryRate >= 1 or < 0 and non-increasing CDS tenors', () => {
@@ -97,7 +97,7 @@ describe('Fase 0 — Domain Model & Builder (Gregory Cap. 5, 6, 11, 12, 13, 14, 
     });
   });
 
-  describe('createCSA (Gregory Cap. 6, 11, 13, 15)', () => {
+  describe('createCSA (Cap. 6, 11, 13, 15)', () => {
     it('creates valid GLOBAL and TRADE CSAs with defaults', () => {
       const noCsa = createCSA({ id: 'csa_none', type: 'NO_CSA' });
       expect(noCsa.mporDays).toBe(0);
@@ -179,7 +179,7 @@ describe('Fase 0 — Domain Model & Builder (Gregory Cap. 5, 6, 11, 12, 13, 14, 
     });
   });
 
-  describe('buildNettingSets & CSA override resolution (FR-7.2, Gregory Cap. 5 & 14)', () => {
+  describe('buildNettingSets & CSA override resolution (FR-7.2, Cap. 5 & 14)', () => {
     it('groups trades under global CSA and separates trades with punctual csaOverrideId', () => {
       const cpty = createCounterparty({
         id: 'cpty_1',

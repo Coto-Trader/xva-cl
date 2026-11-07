@@ -14,7 +14,7 @@ import {
   computeXvaSummary,
 } from '../src/engine/xva';
 
-describe('Fase 5 & Fase 6 — XVA Engine (CVA, DVA, FCA, FBA, MVA, KVA), Anti-Double-Counting & Wrong-Way Risk (FR-4.4, FR-4.5, FR-5.1, Gregory Cap. 14, 15, 16, 17)', () => {
+describe('Fase 5 & Fase 6 — XVA Engine (CVA, DVA, FCA, FBA, MVA, KVA), Anti-Double-Counting & Wrong-Way Risk (FR-4.4, FR-4.5, FR-5.1, Cap. 14, 15, 16, 17)', () => {
   const curves = sampleMarketCurves();
   const profile = buildAnalyticalCCSExposureProfile(
     curves,
@@ -86,7 +86,7 @@ describe('Fase 5 & Fase 6 — XVA Engine (CVA, DVA, FCA, FBA, MVA, KVA), Anti-Do
     expect(summary.accounting_xva).toBeCloseTo(-refCva + refDva, 10);
   });
 
-  it('HARD RULE (Gregory Cap. 15, FR-4.4, FR-4.5): NEVER sums DVA and FBA together; fails explicitly if anyone does', () => {
+  it('HARD RULE (Cap. 15, FR-4.4, FR-4.5): NEVER sums DVA and FBA together; fails explicitly if anyone does', () => {
     const summary = computeXvaSummary({
       ee: profile.expectedExposure,
       ene: profile.expectedNegativeExposure,
@@ -124,7 +124,7 @@ describe('Fase 5 & Fase 6 — XVA Engine (CVA, DVA, FCA, FBA, MVA, KVA), Anti-Do
     ).toThrow(/Accounting XVA violation/);
   });
 
-  it('computes MVA on segregated Initial Margin and KVA on economic capital profile (Gregory Cap. 16)', () => {
+  it('computes MVA on segregated Initial Margin and KVA on economic capital profile (Cap. 16)', () => {
     const imProfile = profile.bucketTimes.map(() => 10_000); // 10,000 UF segregated IM
     const pfeProfile = profile.expectedExposure.map((ee) => ee * 2.33);
     const capProfile = buildSimplifiedCapitalProfile(profile.expectedExposure, pfeProfile);
@@ -157,7 +157,7 @@ describe('Fase 5 & Fase 6 — XVA Engine (CVA, DVA, FCA, FBA, MVA, KVA), Anti-Do
     expect(summary.net_xva_all_in).toBeCloseTo(summary.net_xva - mva - kva, 10);
   });
 
-  it('Fase 6 — Wrong-Way Risk (FR-5.1, Gregory Cap. 17): rho > 0 increases CVA monotonically, rho = 0 matches base CVA, rho < 0 reduces CVA', () => {
+  it('Fase 6 — Wrong-Way Risk (FR-5.1, Cap. 17): rho > 0 increases CVA monotonically, rho = 0 matches base CVA, rho < 0 reduces CVA', () => {
     const cvaBase = computeCvaWithWwr(
       profile.expectedExposure,
       profile.discountFactors,
