@@ -80,7 +80,9 @@ pre,
   transition: color 0.15s ease;
 }
 .ecosystem-links .eco-sep {
-  color: var(--border-strong, #2A3542);
+  color: var(--text-dim);
+  opacity: 0.55;
+  margin: 0 1px;
 }
 
 .ecosystem-links a:hover {
