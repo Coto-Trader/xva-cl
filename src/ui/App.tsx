@@ -7,7 +7,7 @@
  * 3. Colateral / CSA (Threshold, MTA, MPOR, Segregated IM, Cheapest-to-Deliver y Settlement Spike Physical vs NDS).
  * 4. Productos y Portafolio (CCS_UF_CLP, IRS, FX_FORWARD y Selector Global CSA vs Override Puntual por Trade).
  * 5. Resultados (Dos totales separados `net_xva` vs `accounting_xva`, Perfiles EE/ENE/PFE con y sin CSA,
- *    Waterfall XVA, Slider Wrong-Way Risk, QuickSens 3D, Semáforo DV01 y Recomendador de Coberturas con modal Gregory).
+ *    Waterfall XVA, Slider Wrong-Way Risk, QuickSens 3D, Semáforo DV01 y Recomendador de Coberturas con modal ).
  */
 
 import React, { useState } from 'react';
@@ -103,19 +103,19 @@ export const App: React.FC = () => {
           <div className="ecosystem-ribbon">
             <div className="ecosystem-links">
               <a href="https://segundaopinion.cl" target="_blank" rel="noreferrer">
-                segundaopinion.cl
-              </a>
-              <span>·</span>
-              <a href="https://xva.cl" className="active-site">
-                xva.cl
+                SegundaOpinión ↗
               </a>
               <span>·</span>
               <a href="https://tradeai.cl" target="_blank" rel="noreferrer">
-                Suite Trade AI ↗
+                Suite TradeAI ↗
+              </a>
+              <span>·</span>
+              <a href="https://xva.cl" className="active-site">
+                XVA
               </a>
             </div>
             <div className="ecosystem-links">
-              <span>Jon Gregory · The xVA Challenge (3rd ed.)</span>
+              <span>Riesgo de contraparte · Funding · Capital</span>
               <span>|</span>
               <span>
                 Sesión: <strong style={{ color: 'var(--text)' }}>{user.name}</strong>
@@ -237,7 +237,7 @@ export const App: React.FC = () => {
                         CAMARA_UF) con factor de descuento df(t) = exp(-z(t)·t) y df(0) = 1.
                       </p>
                     </div>
-                    <span className="book-badge">Gregory Cap. 13 — OIS Discounting</span>
+                    <span className="book-badge">Cap. 13 — OIS Discounting</span>
                   </div>
 
                   <div className="form-grid">
@@ -323,8 +323,8 @@ export const App: React.FC = () => {
 
                     <ZeroCurvesSvgChart curves={curves} />
 
-                    <div className="gregory-callout">
-                      <strong>Cheapest-to-Deliver (Gregory Cap. 13):</strong> Cuando un CSA permite
+                    <div className="book-callout">
+                      <strong>Cheapest-to-Deliver (Cap. 13):</strong> Cuando un CSA permite
                       múltiples monedas elegibles, la parte que entrega colateral optimiza
                       entregando la moneda de mayor rendimiento implícito:{' '}
                       <code>
@@ -440,7 +440,7 @@ export const App: React.FC = () => {
                         mapeo Proxy por Rating + Sector + Región es obligatorio cuando no hay CDS.
                       </p>
                     </div>
-                    <span className="book-badge">Gregory Cap. 12 — Credit &amp; IFRS 13</span>
+                    <span className="book-badge">Cap. 12 — Credit &amp; IFRS 13</span>
                   </div>
 
                   <div className="form-grid">
@@ -562,8 +562,8 @@ export const App: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="gregory-callout">
-                    <strong>Probabilidades Risk-Neutral vs Real-World (Gregory Cap. 12 / IFRS 13):</strong>{' '}
+                  <div className="book-callout">
+                    <strong>Probabilidades Risk-Neutral vs Real-World (Cap. 12 / IFRS 13):</strong>{' '}
                     Los auditores y reguladores bajo IFRS 13 exigen extraer las probabilidades de
                     default desde spreads de crédito o proxies de mercado (risk-neutral), porque ese
                     spread incorpora la prima por riesgo sistemático y el costo real de cubrir el
@@ -604,7 +604,7 @@ export const App: React.FC = () => {
                         Risk (lookback t - MPOR) e Initial Margin segregado.
                       </p>
                     </div>
-                    <span className="book-badge">Gregory Cap. 6, 11 &amp; 15</span>
+                    <span className="book-badge">Cap. 6, 11 &amp; 15</span>
                   </div>
 
                   <div className="form-grid">
@@ -704,8 +704,8 @@ export const App: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="gregory-callout">
-                    <strong>Initial Margin Segregado (Gregory Cap. 11 y Cap. 15):</strong> El IM
+                  <div className="book-callout">
+                    <strong>Initial Margin Segregado (Cap. 11 y Cap. 15):</strong> El IM
                     segregado reduce la exposición positiva al default (menor CVA), pero como no
                     puede rehipotecarse, <strong>no reduce el ENE ni genera beneficio FBA</strong>, y
                     en cambio origina un costo de remuneración <strong>MVA</strong> (Cap. 16).
@@ -791,7 +791,7 @@ export const App: React.FC = () => {
                         Global y segrega la operación en su propio Netting Set (FR-7.2).
                       </p>
                     </div>
-                    <span className="book-badge">Gregory Cap. 5, 6 &amp; 7</span>
+                    <span className="book-badge">Cap. 5, 6 &amp; 7</span>
                   </div>
 
                   <div className="table-wrap">
@@ -856,7 +856,7 @@ export const App: React.FC = () => {
                     </table>
                   </div>
 
-                  <div className="gregory-callout">
+                  <div className="book-callout">
                     <strong>Netting Sets Activos ({scenario.portfolio.nettingSets.length}):</strong>{' '}
                     {scenario.portfolio.nettingSets
                       .map((ns) => `${ns.id} [CSA: ${ns.csaId}, Trades: ${ns.tradeIds.length}]`)
@@ -1051,7 +1051,7 @@ export const App: React.FC = () => {
             {/* ==================== PASO 5: RESULTADOS, WATERFALL, WWR & COBERTURA ==================== */}
             {wizardStep === 5 && (
               <>
-                {/* Dos Tarjetas Hero Separadas: Regla Dura Anti-Doble-Conteo (Gregory Cap. 14 y 15) */}
+                {/* Dos Tarjetas Hero Separadas: Regla Dura Anti-Doble-Conteo (Cap. 14 y 15) */}
                 <div className="grid-2">
                   <div className="kpi-card highlight-economic">
                     <div
@@ -1062,7 +1062,7 @@ export const App: React.FC = () => {
                       }}
                     >
                       <span className="kpi-label">
-                        1. VISTA ECONÓMICA / PRICING (DVA EXCLUIDO — GREGORY CAP. 15)
+                        1. VISTA ECONÓMICA / PRICING (DVA EXCLUIDO — CAP. 15)
                       </span>
                       <span className="pill pill-low">Anti-Doble-Conteo OK</span>
                     </div>
@@ -1088,7 +1088,7 @@ export const App: React.FC = () => {
                       }}
                     >
                       <span className="kpi-label">
-                        2. VISTA CONTABLE / BALANCE IFRS 13 (GREGORY CAP. 14)
+                        2. VISTA CONTABLE / BALANCE IFRS 13 (CAP. 14)
                       </span>
                       <span className="book-badge">IFRS 13 Fair Value</span>
                     </div>
@@ -1157,7 +1157,7 @@ export const App: React.FC = () => {
                           Colateral (línea punteada) y PFE 99%.
                         </p>
                       </div>
-                      <span className="book-badge">Gregory Cap. 7 &amp; 11</span>
+                      <span className="book-badge">Cap. 7 &amp; 11</span>
                     </div>
                     <ExposureProfileSvgChart profile={output.exposureProfile} />
                   </div>
@@ -1172,7 +1172,7 @@ export const App: React.FC = () => {
                           Visualización de cargos (-) y beneficios (+) en UF sin doble conteo DVA/FBA.
                         </p>
                       </div>
-                      <span className="book-badge">Gregory Cap. 14, 15 &amp; 16</span>
+                      <span className="book-badge">Cap. 14, 15 &amp; 16</span>
                     </div>
                     <XvaWaterfallSvgChart xva={output.xvaUF} />
                   </div>
@@ -1192,7 +1192,7 @@ export const App: React.FC = () => {
                           del cliente (ρ &gt; 0 ⇒ CVA_WWR &gt; CVA_base).
                         </p>
                       </div>
-                      <span className="book-badge">Gregory Cap. 17 — WWR</span>
+                      <span className="book-badge">Cap. 17 — WWR</span>
                     </div>
 
                     <div className="field-group">
@@ -1341,11 +1341,11 @@ export const App: React.FC = () => {
                       </h3>
                       <p className="panel-subtitle">
                         Cada recomendación cuantifica el deterioro esperado sin cobertura vs el costo
-                        estimado de cubrir hoy e incluye su regla explícita de Jon Gregory (haz clic
+                        estimado de cubrir hoy e incluye su regla explícita (haz clic
                         en &ldquo;Explicar&rdquo;).
                       </p>
                     </div>
-                    <span className="book-badge">Gregory Cap. 12, 14 &amp; 18</span>
+                    <span className="book-badge">Cap. 12, 14 &amp; 18</span>
                   </div>
 
                   <div className="table-wrap">
@@ -1493,11 +1493,11 @@ export const App: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="gregory-callout">
-                  <strong>Regla del Libro (Jon Gregory):</strong> {selectedHedgeModal.bookRule}
+                <div className="book-callout">
+                  <strong>Regla del marco:</strong> {selectedHedgeModal.bookRule}
                 </div>
 
-                <div className="gregory-callout" style={{ borderLeftColor: '#818cf8' }}>
+                <div className="book-callout" style={{ borderLeftColor: '#818cf8' }}>
                   <strong>Criterio Contable IFRS 13 vs Económico:</strong>{' '}
                   {selectedHedgeModal.accountingNote}
                 </div>

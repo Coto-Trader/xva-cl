@@ -3,7 +3,7 @@
  * y Grilla Pre-Computada QuickSens 3D.
  *
  * Referencias:
- * - Jon Gregory, "The xVA Challenge" (3rd ed., 2015), Cap. 18 (Managing xVA: Sensibilidades y Greeks)
+ * - "The xVA Challenge" (3rd ed., 2015), Cap. 18 (Managing xVA: Sensibilidades y Greeks)
  * - Reproduce `sensitivities/aad.py` (gradientes exactos y FD por tenor) y
  *   `sensitivities/quicksens_grid.py` (interpolación trilineal 3D en sub-milisegundo).
  */
@@ -26,11 +26,11 @@ export interface QuickSensGrid {
 }
 
 export interface XvaGreeks {
-  /** Sensibilidad de CVA a +1 bp en el spread CDS de la contraparte (Gregory Cap. 18) */
+  /** Sensibilidad de CVA a +1 bp en el spread CDS de la contraparte (Cap. 18) */
   cs01: number;
   /** Sensibilidad de DVA a +1 bp en nuestro propio spread CDS */
   ownCs01: number;
-  /** Sensibilidad de CVA a +1% (+100 bps abs) de volatilidad anualizada UF/CLP (Gregory Cap. 18) */
+  /** Sensibilidad de CVA a +1% (+100 bps abs) de volatilidad anualizada UF/CLP (Cap. 18) */
   vega: number;
   /** Sensibilidad de CVA a +1% en el tipo de cambio spot UF/CLP */
   fxDelta: number;
@@ -249,7 +249,7 @@ export interface ComputeXvaGreeksParams {
 
 /**
  * Calcula los Greeks completos de XVA (CS01, Own CS01, Vega, FX Delta, Rate DV01 y Theta)
- * mediante bump-and-revalue sobre el pipeline XVA (Gregory Cap. 18, FR-6.1).
+ * mediante bump-and-revalue sobre el pipeline XVA (Cap. 18, FR-6.1).
  */
 export function computeXvaGreeks(params: ComputeXvaGreeksParams): XvaGreeks {
   const scale = params.collateralScaling ?? 1.0;

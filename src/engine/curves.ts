@@ -2,7 +2,7 @@
  * OIS Discount Curve Construction via Monotone Cubic Hermite (PCHIP) Interpolation
  * (Fase 1 — src/engine/curves.ts)
  *
- * Faithful to Jon Gregory, "The xVA Challenge" (3rd ed., 2015), Chapter 13:
+ * Faithful to "The xVA Challenge" (3rd ed., 2015), Chapter 13:
  * - "the correct discounting rate for a derivative is the rate of return of collateral" (Cap. 13).
  * - Continuous zero-coupon rates interpolated with Fritsch-Carlson PCHIP (monotone cubic Hermite)
  *   and flat extrapolation outside [tenors[0], tenors[n-1]].
@@ -78,7 +78,7 @@ function computePchipSlopes(x: readonly number[], y: readonly number[]): Float64
 }
 
 /**
- * Continuously-compounded zero-coupon curve with PCHIP interpolation (Gregory Cap. 13).
+ * Continuously-compounded zero-coupon curve with PCHIP interpolation (Cap. 13).
  * Exact TypeScript equivalent of `ZeroCurve` in `curves/curve_builder.py`.
  */
 export class ZeroCurve {
@@ -165,7 +165,7 @@ export class ZeroCurve {
   }
 
   /**
-   * Continuous discount factor `df(t) = exp(-z(t) * t)` with `df(0) = 1.0` (Gregory Cap. 13).
+   * Continuous discount factor `df(t) = exp(-z(t) * t)` with `df(0) = 1.0` (Cap. 13).
    */
   public discountFactor(t: number): number {
     if (t < 0 || !Number.isFinite(t)) {
@@ -227,7 +227,7 @@ export class ZeroCurve {
 }
 
 /**
- * Container of the three OIS discounting curves (SOFR, CAMARA_CLP, CAMARA_UF) (Gregory Cap. 13).
+ * Container of the three OIS discounting curves (SOFR, CAMARA_CLP, CAMARA_UF) (Cap. 13).
  */
 export class CurveSet {
   public readonly sofr: ZeroCurve;
@@ -249,17 +249,17 @@ export class CurveSet {
   }
 
   /**
-   * Cheapest-to-deliver collateral curve selection (Gregory Cap. 13):
+   * Cheapest-to-deliver collateral curve selection (Cap. 13):
    * "A party should optimally post the collateral in the highest yielding currency."
    */
-  // SUPUESTO (no en Gregory): Maps Currency ('USD'->'SOFR', 'CLP'->'CAMARA_CLP', 'UF'->'CAMARA_UF')
+  // SUPUESTO (no en ): Maps Currency ('USD'->'SOFR', 'CLP'->'CAMARA_CLP', 'UF'->'CAMARA_UF')
   // and compares the 1Y continuous zero rate as the yield proxy when multiple collateral currencies are eligible.
   public selectCheapestToDeliverCurve(eligibleCcy: readonly Currency[], horizonYears = 1.0): CurveName {
     const ccyToCurve: Record<Currency, CurveName> = {
       USD: 'SOFR',
       CLP: 'CAMARA_CLP',
       UF: 'CAMARA_UF',
-      EUR: 'SOFR', // SUPUESTO (no en Gregory): fallback to SOFR when EUR curve not parameterized
+      EUR: 'SOFR', // SUPUESTO (no en ): fallback to SOFR when EUR curve not parameterized
     };
     if (!eligibleCcy || eligibleCcy.length === 0) {
       return 'CAMARA_CLP';

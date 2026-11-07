@@ -1,7 +1,7 @@
 /**
  * Domain Model Entities — XVA.cl (Fase 0)
  *
- * Faithful to Jon Gregory, "The xVA Challenge: Counterparty Credit Risk,
+ * Faithful to "The xVA Challenge: Counterparty Credit Risk,
  * Funding, Collateral and Capital" (3rd ed., Wiley, 2015).
  *
  * Pure domain types with zero UI or engine dependencies (docs/DATA-MODEL.md).
@@ -16,7 +16,7 @@ export type Direction = 'PAY' | 'RECEIVE';
 export type ProductType = 'CCS_UF_CLP' | 'IRS' | 'FX_FORWARD';
 
 /**
- * Continuous zero-rate curve definition (Gregory Cap. 13).
+ * Continuous zero-rate curve definition (Cap. 13).
  * Discount factor: df(t) = exp(-z(t) * t), with df(0) = 1.
  */
 export interface ZeroCurveData {
@@ -28,7 +28,7 @@ export interface ZeroCurveData {
 }
 
 /**
- * Direct CDS term structure for liquid counterparties (Gregory Cap. 12).
+ * Direct CDS term structure for liquid counterparties (Cap. 12).
  */
 export interface CreditCurveData {
   /** Maturities in years, strictly increasing (> 0). */
@@ -41,7 +41,7 @@ export interface CreditCurveData {
 
 /**
  * Proxy mapping key for illiquid counterparties without liquid CDS quotes.
- * Gregory Cap. 12: "the bank must use a proxy spread that is appropriate
+ * Cap. 12: "the bank must use a proxy spread that is appropriate
  * based on the rating, industry and region".
  */
 export interface ProxyKey {
@@ -58,7 +58,7 @@ export interface ProxyKey {
 export interface MarketEnv {
   /** Valuation date in ISO format (YYYY-MM-DD). */
   asOf: string;
-  /** Discount curves indexed by CurveName (Gregory Cap. 13: OIS discounting). */
+  /** Discount curves indexed by CurveName (Cap. 13: OIS discounting). */
   curves: Record<CurveName, ZeroCurveData>;
   /** Spot FX rates (e.g. { UFCLP: 38000 }). */
   fxSpot: Record<string, number>;
@@ -66,13 +66,13 @@ export interface MarketEnv {
   fxVol: Record<string, number>;
   /** Optional annualized interest rate volatilities by curve. */
   rateVol?: Partial<Record<CurveName, number>>;
-  /** Optional treasury funding spread in decimal (Gregory Cap. 15, e.g. 0.0050 = 50 bps). */
+  /** Optional treasury funding spread in decimal (Cap. 15, e.g. 0.0050 = 50 bps). */
   fundingSpread?: number;
 }
 
 /**
- * Counterparty or Own-institution entity (Gregory Cap. 12, Cap. 14).
- * Rule (Gregory Cap. 12): Either a valid `creditCurve` or a valid `proxyKey`
+ * Counterparty or Own-institution entity (Cap. 12, Cap. 14).
+ * Rule (Cap. 12): Either a valid `creditCurve` or a valid `proxyKey`
  * MUST be present; a counterparty can never lack both.
  */
 export interface Counterparty {
@@ -85,17 +85,17 @@ export interface Counterparty {
   recoveryRate: number;
   /** Liquid CDS term structure when available. */
   creditCurve?: CreditCurveData;
-  /** Mandatory proxy mapping when creditCurve is absent (Gregory Cap. 12). */
+  /** Mandatory proxy mapping when creditCurve is absent (Cap. 12). */
   proxyKey?: ProxyKey;
   /** True if this entity represents our own institution (for DVA / FBA). */
   ownParty?: boolean;
 }
 
 /**
- * Credit Support Annex (CSA) / Collateral agreement (Gregory Cap. 6, 11, 13, 15).
+ * Credit Support Annex (CSA) / Collateral agreement (Cap. 6, 11, 13, 15).
  * - IM acts like a negative threshold for CVA but if segregated cannot be
- *   used for funding benefit (Gregory Cap. 6 & Cap. 15).
- * - MPOR (Margin Period of Risk) lookback applies to collateralized exposure (Gregory Cap. 11).
+ *   used for funding benefit (Cap. 6 & Cap. 15).
+ * - MPOR (Margin Period of Risk) lookback applies to collateralized exposure (Cap. 11).
  */
 export interface CSA {
   id: string;
@@ -105,21 +105,21 @@ export interface CSA {
   thresholdOwn: number;
   /** Threshold applied to the counterparty (collateral they post above this positive MTM). */
   thresholdCpty: number;
-  /** Minimum Transfer Amount (Gregory Cap. 6: additive with threshold). */
+  /** Minimum Transfer Amount (Cap. 6: additive with threshold). */
   mta: number;
-  /** Initial Margin amount (Gregory Cap. 6, Cap. 16). */
+  /** Initial Margin amount (Cap. 6, Cap. 16). */
   initialMargin: number;
   /** Rounding lot size for collateral calls (> 0 or 0 for none). */
   rounding: number;
-  /** Eligible collateral currencies (Gregory Cap. 13: cheapest-to-deliver). */
+  /** Eligible collateral currencies (Cap. 13: cheapest-to-deliver). */
   eligibleCcy: Currency[];
   /** Valuation haircuts by collateral asset/currency key in [0, 1). */
   haircuts: Record<string, number>;
-  /** Margin Period of Risk in business days (Gregory Cap. 8 & Cap. 11: typically 10–20 days). */
+  /** Margin Period of Risk in business days (Cap. 8 & Cap. 11: typically 10–20 days). */
   mporDays: number;
-  /** OIS curve governing collateral remuneration and discounting (Gregory Cap. 13). */
+  /** OIS curve governing collateral remuneration and discounting (Cap. 13). */
   collateralRate: CurveName;
-  /** If true, IM is segregated and excluded from FVA funding benefit (Gregory Cap. 15). */
+  /** If true, IM is segregated and excluded from FVA funding benefit (Cap. 15). */
   segregatedIM: boolean;
 }
 
@@ -153,9 +153,9 @@ export interface CCSUFCLPTrade extends TradeBase {
   ufClpFxFixed: number;
   /** True = Non-Deliverable Swap (NDS, net cash settlement); False = physical principal exchange. */
   nonDeliverable: boolean;
-  /** Optional fixed UF coupon rate in decimal (default 0.025 = 2.5%). // SUPUESTO (no en Gregory) */
+  /** Optional fixed UF coupon rate in decimal (default 0.025 = 2.5%). // SUPUESTO (no en ) */
   ufFixedRate?: number;
-  /** Optional fixed/floating CLP spread or rate in decimal (default 0.055 = 5.5%). // SUPUESTO (no en Gregory) */
+  /** Optional fixed/floating CLP spread or rate in decimal (default 0.055 = 5.5%). // SUPUESTO (no en ) */
   clpLegRate?: number;
 }
 
@@ -180,7 +180,7 @@ export type AnyTrade = CCSUFCLPTrade | IRSTrade | FXForwardTrade;
 
 /**
  * Netting Set — fundamental unit of exposure and XVA aggregation.
- * Gregory Cap. 5 & Cap. 14: CVA/DVA/FVA must be computed at the netting-set level.
+ * Cap. 5 & Cap. 14: CVA/DVA/FVA must be computed at the netting-set level.
  */
 export interface NettingSet {
   id: string;
@@ -201,7 +201,7 @@ export interface Portfolio {
 }
 
 /**
- * Monte Carlo simulation configuration (Gregory Cap. 10, NFR-2, NFR-3).
+ * Monte Carlo simulation configuration (Cap. 10, NFR-2, NFR-3).
  */
 export interface MonteCarloConfig {
   /** Number of simulation paths (v1 <= 10,000 per NFR-2). */
@@ -210,7 +210,7 @@ export interface MonteCarloConfig {
   gridPointsPerYear: number;
   /** Deterministic PRNG seed for exact reproducibility (NFR-3). */
   seed: number;
-  /** Pathwise simulation mode required for collateral lookback / MPOR (Gregory Cap. 10). */
+  /** Pathwise simulation mode required for collateral lookback / MPOR (Cap. 10). */
   pathwise: boolean;
 }
 

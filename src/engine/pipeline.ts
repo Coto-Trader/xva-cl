@@ -5,11 +5,11 @@
  * 1. Curvas cero PCHIP (`CurveSet`).
  * 2. Crédito / Hazard curve bootstrap o Proxy obligatorio (`resolveCounterpartyHazardCurve`).
  * 3. Simulación Monte Carlo pathwise por Netting Set con resolución jerárquica de CSA
- *    (Trade Override > Global CSA, FR-7.2, Gregory Cap. 6 y Cap. 11).
- * 4. Cálculo de XVA (`net_xva = -CVA - FCA + FBA` y `accounting_xva = -CVA + DVA`, Gregory Cap. 14-16)
- *    + curva de sensibilidad Wrong-Way Risk (Gregory Cap. 17).
+ *    (Trade Override > Global CSA, FR-7.2, Cap. 6 y Cap. 11).
+ * 4. Cálculo de XVA (`net_xva = -CVA - FCA + FBA` y `accounting_xva = -CVA + DVA`, Cap. 14-16)
+ *    + curva de sensibilidad Wrong-Way Risk (Cap. 17).
  * 5. Sensibilidades (DV01 por tenor, CS01, Vega, FX Delta, QuickSens 3D) y recomendaciones de cobertura
- *    con citas al libro de Jon Gregory (Cap. 18).
+ *    con citas al libro de la literatura estándar (Cap. 18).
  */
 
 import {
@@ -108,7 +108,7 @@ export interface XvaPipelineOutput {
   spreadTrades: SpreadTradeRecommendation[];
   /** Alerta de carry UF/CLP */
   inflationCarryCheck: ForcedInflationForwardCheck;
-  /** Recomendaciones de cobertura de Greeks XVA con citas a Gregory */
+  /** Recomendaciones de cobertura de Greeks XVA con citas a  */
   hedgeRecommendations: HedgeRecommendation[];
   /** Grilla 3D QuickSens pre-computada para sliders instantáneos */
   quickSensGrid: QuickSensGrid;
@@ -252,7 +252,7 @@ export function createDefaultSampleScenario(): Scenario {
 
   return {
     id: 'scen_default_ccs_uf_clp',
-    name: 'CCS UF/CLP 5Y — 500k UF (Caso Base Gregory / demo.py)',
+    name: 'CCS UF/CLP 5Y — 500k UF (Caso Base  / demo.py)',
     createdAt: '2026-11-07T00:00:00.000Z',
     market: {
       asOf: '2026-11-07',

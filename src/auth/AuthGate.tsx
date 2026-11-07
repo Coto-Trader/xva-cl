@@ -85,8 +85,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           </div>
           <h1 className="auth-title">Terminal Cuantitativa de XVA y Cobertura</h1>
           <p className="auth-subtitle">
-            Motor interactivo 100% en navegador basado en Jon Gregory,{' '}
-            <em>The xVA Challenge (3rd ed.)</em>. Calcula CVA, DVA, FCA, FBA, MVA, KVA, WWR y Greeks
+            Motor interactivo 100% en navegador para la valoración y cobertura de
+            riesgo de contraparte. Calcula CVA, DVA, FCA, FBA, MVA, KVA, WWR y Greeks
             de cobertura para derivados OTC chilenos (CCS UF/CLP, IRS CAMARA, FX Forward).
           </p>
 

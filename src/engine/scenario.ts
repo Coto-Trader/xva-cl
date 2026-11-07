@@ -1,7 +1,7 @@
 /**
  * Monte Carlo Pathwise Scenario Generator (Fase 3 — src/engine/scenario.ts)
  *
- * Faithful to Jon Gregory, "The xVA Challenge" (3rd ed., 2015), Chapters 7 & 10:
+ * Faithful to "The xVA Challenge" (3rd ed., 2015), Chapters 7 & 10:
  * - "exposure needs to be defined over multiple time horizons" (Cap. 7).
  * - "the simulation model must be generic to support consistent simulation of the many risk factors" (Cap. 10).
  * - "the pathwise method is more suitable for path-dependent derivatives... collateral modelling" (Cap. 10).
@@ -88,7 +88,7 @@ export interface SimulationGrid {
 }
 
 /**
- * Builds the time grid up to `maxMaturityYears` (Gregory Cap. 10: last grid point >= longest maturity)
+ * Builds the time grid up to `maxMaturityYears` (Cap. 10: last grid point >= longest maturity)
  * and simulates `mc.numPaths` correlated/consistent risk-factor trajectories.
  */
 export function generateMonteCarloScenarios(
@@ -122,8 +122,8 @@ export function generateMonteCarloScenarios(
   const volUf = market.rateVol?.CAMARA_UF ?? 0.0050;
 
   // Use antithetic variates on paired paths so sample mean E[W_t] = 0 and
-  // sample E[|Z|] converges rapidly to sqrt(2/pi) (Gregory Cap. 10 variance reduction).
-  // // SUPUESTO (no en Gregory): Antithetic pairing enabled by default for faster MC convergence in browser.
+  // sample E[|Z|] converges rapidly to sqrt(2/pi) (Cap. 10 variance reduction).
+  // // SUPUESTO (no en ): Antithetic pairing enabled by default for faster MC convergence in browser.
   const paths: SimulatedPathPoint[][] = [];
   const numPaths = Math.max(2, mc.numPaths);
 

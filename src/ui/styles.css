@@ -498,7 +498,7 @@ pre,
 }
 
 /* Callouts & Educational Notes */
-.gregory-callout {
+.book-callout {
   background: rgba(47, 217, 232, 0.06);
   border-left: 3px solid var(--signal);
   padding: 10px 14px;
@@ -507,7 +507,7 @@ pre,
   color: var(--text);
 }
 
-.gregory-callout strong {
+.book-callout strong {
   color: var(--signal-bright);
 }
 

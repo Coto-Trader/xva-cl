@@ -1,8 +1,8 @@
 /**
  * Credit Curve & Hazard Rate Bootstrap (Fase 2 — src/engine/credit.ts)
  *
- * Faithful to Jon Gregory, "The xVA Challenge" (3rd ed., 2015), Chapter 12:
- * - Risk-neutral default probabilities derived from credit spreads (Gregory Cap. 12, IFRS 13):
+ * Faithful to "The xVA Challenge" (3rd ed., 2015), Chapter 12:
+ * - Risk-neutral default probabilities derived from credit spreads (Cap. 12, IFRS 13):
  *   "regulators and auditors generally do not support the deviation from risk-neutral default probabilities"
  * - Credit triangle approximation: lambda ≈ s / LGD, where LGD = 1 - recoveryRate (Cap. 12).
  * - Piecewise-constant marginal hazard rate curve bootstrapped across tenors up to portfolio maturity:
@@ -14,7 +14,7 @@
 import { Counterparty, CreditCurveData, ProxyKey, Rating } from '../domain/types';
 
 /**
- * Single-tenor credit triangle bootstrap: `lambda = cdsSpread / (1 - recoveryRate)` (Gregory Cap. 12).
+ * Single-tenor credit triangle bootstrap: `lambda = cdsSpread / (1 - recoveryRate)` (Cap. 12).
  * Exact equivalent of `bootstrap_hazard_rate` in `xva/credit.py`.
  */
 export function bootstrapHazardRate(cdsSpread: number, recoveryRate: number): number {
@@ -29,7 +29,7 @@ export function bootstrapHazardRate(cdsSpread: number, recoveryRate: number): nu
 }
 
 /**
- * Survival probability under constant hazard intensity: `S(t) = exp(-hazardRate * t)` (Gregory Cap. 12).
+ * Survival probability under constant hazard intensity: `S(t) = exp(-hazardRate * t)` (Cap. 12).
  */
 export function survivalProbability(hazardRate: number, t: number): number {
   if (t < 0 || !Number.isFinite(t)) {
@@ -39,7 +39,7 @@ export function survivalProbability(hazardRate: number, t: number): number {
 }
 
 /**
- * Marginal default probability on `[t0, t1]` (`t1 > t0`): `PD(t0, t1) = S(t0) - S(t1)` (Gregory Cap. 12).
+ * Marginal default probability on `[t0, t1]` (`t1 > t0`): `PD(t0, t1) = S(t0) - S(t1)` (Cap. 12).
  */
 export function marginalDefaultProbability(hazardRate: number, t0: number, t1: number): number {
   if (t1 <= t0) {
@@ -49,7 +49,7 @@ export function marginalDefaultProbability(hazardRate: number, t0: number, t1: n
 }
 
 /**
- * Piecewise-constant hazard curve bootstrapped from a CDS term structure (Gregory Cap. 12).
+ * Piecewise-constant hazard curve bootstrapped from a CDS term structure (Cap. 12).
  */
 export interface HazardCurve {
   readonly tenors: readonly number[];
@@ -70,7 +70,7 @@ export interface HazardCurve {
 /**
  * Bootstraps a piecewise-constant marginal hazard curve from tenors and par CDS spreads.
  * Matches `bootstrap_hazard_curve` in `xva/credit.py` and rejects inverted curves that
- * produce negative marginal hazard rates (FR-2.1, FR-2.3, Gregory Cap. 12).
+ * produce negative marginal hazard rates (FR-2.1, FR-2.3, Cap. 12).
  */
 export function bootstrapHazardCurve(
   tenors: readonly number[],
@@ -121,7 +121,7 @@ export function bootstrapHazardCurve(
       throw new Error(
         `bootstrap produced a negative hazard rate in bucket ${i} (tenor ${tenors[i]}); ` +
           `this indicates an inverted CDS spread curve that the flat-average-hazard bootstrap ` +
-          `cannot represent as a valid (non-negative) piecewise-constant intensity (Gregory Cap. 12)`
+          `cannot represent as a valid (non-negative) piecewise-constant intensity (Cap. 12)`
       );
     }
   }
@@ -193,9 +193,9 @@ export function bootstrapHazardCurve(
 /**
  * Base 5Y proxy CDS spreads (in decimal, e.g. 0.0150 = 150 bps) by rating,
  * plus sector and region multipliers.
- * Gregory Cap. 12: "the bank must use a proxy spread that is appropriate
+ * Cap. 12: "the bank must use a proxy spread that is appropriate
  * based on the rating, industry and region."
- * // SUPUESTO (no en Gregory): Exact numerical lookup table for rating/sector/region
+ * // SUPUESTO (no en ): Exact numerical lookup table for rating/sector/region
  * // spreads and term-structure slope factors calibrated to LatAm/Chile OTC benchmarks.
  */
 const BASE_5Y_SPREAD_BY_RATING: Record<Rating, number> = {
@@ -231,15 +231,15 @@ const REGION_MULTIPLIER: Record<string, number> = {
 
 const PROXY_TENORS: readonly number[] = [1, 2, 3, 5, 7, 10];
 // Upward-sloping normal credit term structure multipliers around 5Y (= 1.00)
-// // SUPUESTO (no en Gregory): Standard upward-sloping term structure shape for proxy curves
+// // SUPUESTO (no en ): Standard upward-sloping term structure shape for proxy curves
 const PROXY_SLOPE_FACTORS: readonly number[] = [0.65, 0.78, 0.88, 1.00, 1.08, 1.15];
 
 /**
- * Generates a complete proxy CreditCurveData from `(rating, sector, region)` (Gregory Cap. 12, FR-2.2).
+ * Generates a complete proxy CreditCurveData from `(rating, sector, region)` (Cap. 12, FR-2.2).
  */
 export function buildProxyCreditCurve(proxyKey: ProxyKey, recoveryRate = 0.40): CreditCurveData {
   if (!proxyKey || !proxyKey.rating || !proxyKey.sector?.trim() || !proxyKey.region?.trim()) {
-    throw new Error('ProxyKey must include valid rating, sector, and region (Gregory Cap. 12).');
+    throw new Error('ProxyKey must include valid rating, sector, and region (Cap. 12).');
   }
   const base5Y = BASE_5Y_SPREAD_BY_RATING[proxyKey.rating] ?? 0.0150;
   const secKey = proxyKey.sector.trim().toLowerCase().replace(/\s+/g, '');
@@ -259,7 +259,7 @@ export function buildProxyCreditCurve(proxyKey: ProxyKey, recoveryRate = 0.40): 
 
 /**
  * Resolves a Counterparty's effective CreditCurveData (direct CDS if present, otherwise ProxyKey)
- * and bootstraps its piecewise-constant HazardCurve (Gregory Cap. 12, FR-2.1, FR-2.2, FR-2.3).
+ * and bootstraps its piecewise-constant HazardCurve (Cap. 12, FR-2.1, FR-2.2, FR-2.3).
  */
 export function resolveCounterpartyCreditCurve(counterparty: Counterparty): CreditCurveData {
   if (counterparty.creditCurve && counterparty.creditCurve.tenors.length > 0) {
@@ -269,7 +269,7 @@ export function resolveCounterpartyCreditCurve(counterparty: Counterparty): Cred
     return buildProxyCreditCurve(counterparty.proxyKey, counterparty.recoveryRate);
   }
   throw new Error(
-    `Counterparty "${counterparty.name}" lacks both creditCurve and proxyKey (Gregory Cap. 12 / FR-2.2).`
+    `Counterparty "${counterparty.name}" lacks both creditCurve and proxyKey (Cap. 12 / FR-2.2).`
   );
 }
 

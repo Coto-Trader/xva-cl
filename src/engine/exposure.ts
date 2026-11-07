@@ -3,7 +3,7 @@
  * EE(t), ENE(t), PFE 99%(t), EPE, EEPE y Settlement Spike (Physical vs NDS).
  *
  * Referencias:
- * - Jon Gregory, "The xVA Challenge" (3rd ed., 2015):
+ * - "The xVA Challenge" (3rd ed., 2015):
  *   - Cap. 6 (Netting, Close-out y aplicación de CSA)
  *   - Cap. 7 (Medidas de exposición: EE, ENE, PFE, EPE, Effective EPE)
  *   - Cap. 11 (Initial Margin segregado, Threshold, MTA y Margin Period of Risk)
@@ -35,7 +35,7 @@ export interface ExposureProfileResult {
   eee: number[];
   /** Expected Positive Exposure (promedio temporal ponderado de EE(t) en [0, T]) */
   epe: number;
-  /** Effective EPE (promedio temporal de EEE(t) en el primer año min(T, 1Y), Basel III / Gregory Cap. 7) */
+  /** Effective EPE (promedio temporal de EEE(t) en el primer año min(T, 1Y), Basel III / Cap. 7) */
   eepe: number;
   /** EPE sin colateral para medir la reducción porcentual por CSA */
   epeUncollateralized: number;
@@ -50,7 +50,7 @@ export interface CollateralSpikeReport {
 
 /**
  * Encuentra el índice de grilla t_lag <= t - mporYears para evaluar el colateral
- * con rezago de Margin Period of Risk (Gregory Cap. 11).
+ * con rezago de Margin Period of Risk (Cap. 11).
  */
 function findLookbackIndex(times: readonly number[], currentIdx: number, mporYears: number): number {
   if (mporYears <= 0) {
@@ -73,12 +73,12 @@ function findLookbackIndex(times: readonly number[], currentIdx: number, mporYea
 
 /**
  * Calcula el colateral de variación C(p, t) bajo un CSA bilateral con MPOR,
- * Threshold y MTA aditivo (Gregory Cap. 6 y Cap. 11).
+ * Threshold y MTA aditivo (Cap. 6 y Cap. 11).
  *
  * - Para V(t - MPOR) > H_cpty + MTA: C = V(t - MPOR) - H_cpty
  * - Para V(t - MPOR) < -(H_own + MTA): C = V(t - MPOR) + H_own (colateral posteado por el banco, signo negativo)
  * - En la banda [-H_own - MTA, H_cpty + MTA]: C = 0
- * - Nota (Gregory Cap. 11 y Cap. 15): El Initial Margin segregado (`segregatedIM`) NO se
+ * - Nota (Cap. 11 y Cap. 15): El Initial Margin segregado (`segregatedIM`) NO se
  *   mezcla con el Variation Margin ni genera FBA (no es rehipotecable); reduce la exposición
  *   residual positiva al momento del default: max(V - C_VM - IM_segregated, 0).
  */
@@ -124,7 +124,7 @@ export function computeCollateralizedPathExposure(
     const lagIdx = findLookbackIndex(times, i, mporYears);
     const vLag = lagIdx >= 0 ? pathMtm[lagIdx] : 0;
 
-    // Requerimiento teórico de colateral en t - MPOR (Gregory Cap. 6 / Cap. 11)
+    // Requerimiento teórico de colateral en t - MPOR (Cap. 6 / Cap. 11)
     let targetCollateral = 0;
     if (vLag > hCpty) {
       targetCollateral = vLag - hCpty;
@@ -146,7 +146,7 @@ export function computeCollateralizedPathExposure(
     collateralHeld[i] = cNow;
     collateralizedMtm[i] = vAfterVm;
     // El IM segregado reduce la exposición positiva al default de la contraparte,
-    // pero no incrementa ni reduce nuestro ENE de fondeo (Gregory Cap. 11 / Cap. 15)
+    // pero no incrementa ni reduce nuestro ENE de fondeo (Cap. 11 / Cap. 15)
     positiveExposure[i] = Math.max(vAfterVm - imSegregated, 0);
     negativeExposure[i] = Math.max(-vAfterVm, 0);
   }
@@ -171,7 +171,7 @@ export function empiricalQuantile(values: readonly number[], quantile = 0.99): n
 
 /**
  * Calcula EE(t), ENE(t), PFE(t), EEE(t), EPE y EEPE a partir de la matriz MTM del Netting Set
- * [numPaths][numTimes] con y sin CSA (Gregory Cap. 6, 7 y 11).
+ * [numPaths][numTimes] con y sin CSA (Cap. 6, 7 y 11).
  */
 export function computeExposureProfileFromPaths(
   times: readonly number[],
@@ -222,7 +222,7 @@ export function computeExposureProfileFromPaths(
     pfeUncollateralized[i] = empiricalQuantile(uncollPosByTime[i], pfeQuantile);
   }
 
-  // Effective Expected Exposure EEE(t_k) = max(EEE(t_{k-1}), EE(t_k)) (Gregory Cap. 7)
+  // Effective Expected Exposure EEE(t_k) = max(EEE(t_{k-1}), EE(t_k)) (Cap. 7)
   const eee = new Array<number>(numTimes).fill(0);
   let runningMax = 0;
   for (let i = 0; i < numTimes; i++) {
@@ -272,7 +272,7 @@ export function computeExposureProfileFromPaths(
 
 /**
  * Agrega el MTM por trayectoria (en UF) de todos los trades en el Netting Set:
- * V_NS(p, t) = sum_{trade in NS} V_trade(p, t) (Gregory Cap. 6).
+ * V_NS(p, t) = sum_{trade in NS} V_trade(p, t) (Cap. 6).
  */
 export function aggregateNettingSetMtm(
   trades: readonly AnyTrade[],
@@ -325,7 +325,7 @@ export function simulateNettingSetExposure(
  * Perfil analítico de referencia para un CCS UF/CLP con amortización/pull-to-par
  * (reproduce `build_expected_exposure_profile` de `xva/exposure.py` y `demo.py`).
  *
- * // SUPUESTO (no en Gregory): Factor de amortización lineal `(1 - 0.35 * (t / t_max))`
+ * // SUPUESTO (no en ): Factor de amortización lineal `(1 - 0.35 * (t / t_max))`
  * utilizado en el motor de referencia `demo.py` para aproximar el efecto pull-to-par
  * de un Cross-Currency Swap UF/CLP sin Monte Carlo.
  */
@@ -351,7 +351,7 @@ export function buildExpectedExposureProfile(
  * Perfil ENE proporcional al EE para el benchmark determinístico de `demo.py`
  * (`expected_negative_exposure_from_ee` en `xva/exposure.py`).
  *
- * // SUPUESTO (no en Gregory): Escalamiento fijo `ENE(t) = ratio * EE(t)` para el benchmark analítico.
+ * // SUPUESTO (no en ): Escalamiento fijo `ENE(t) = ratio * EE(t)` para el benchmark analítico.
  */
 export function expectedNegativeExposureFromEe(ee: readonly number[], ratio = 0.55): number[] {
   if (ratio < 0) {
@@ -362,7 +362,7 @@ export function expectedNegativeExposureFromEe(ee: readonly number[], ratio = 0.
 
 /**
  * PFE 99% de liquidación por Entrega Física (Physical Delivery, riesgo Herstatt sobre nocional completo,
- * Gregory Cap. 6 / `physical_delivery_pfe` en `xva/exposure.py`).
+ * Cap. 6 / `physical_delivery_pfe` en `xva/exposure.py`).
  */
 export function physicalDeliveryPfe(
   notionalClp: number,

@@ -1,12 +1,12 @@
 /**
  * Domain Builder & Validator — XVA.cl (Fase 0)
  *
- * Enforces all structural and quantitative invariants from Jon Gregory,
+ * Enforces all structural and quantitative invariants from la literatura estándar,
  * "The xVA Challenge" (3rd ed., 2015) and docs/DATA-MODEL.md / docs/REQUIREMENTS.md:
- * - Counterparty MUST have either a valid CDS curve or a valid ProxyKey (Gregory Cap. 12, FR-2.2).
- * - CSA thresholds, MTA, IM, rounding, MPOR, and eligible currencies validated (Gregory Cap. 6, 11, 13, 15).
+ * - Counterparty MUST have either a valid CDS curve or a valid ProxyKey (Cap. 12, FR-2.2).
+ * - CSA thresholds, MTA, IM, rounding, MPOR, and eligible currencies validated (Cap. 6, 11, 13, 15).
  * - Trade-level CSA override (`csaOverrideId`) supersedes global CSA (FR-7.2).
- * - Netting sets aggregate trades by (counterpartyId, effectiveCsaId) (Gregory Cap. 5, Cap. 14).
+ * - Netting sets aggregate trades by (counterpartyId, effectiveCsaId) (Cap. 5, Cap. 14).
  */
 
 import {
@@ -56,7 +56,7 @@ export function isValidProxyKey(proxy?: ProxyKey): proxy is ProxyKey {
 
 /**
  * Creates and validates a Counterparty entity.
- * Gregory Cap. 12 (FR-2.2): If no direct CDS curve is provided, `proxyKey`
+ * Cap. 12 (FR-2.2): If no direct CDS curve is provided, `proxyKey`
  * (rating + sector + region) is mandatory. Never allow a counterparty without
  * both creditCurve and proxyKey.
  */
@@ -77,7 +77,7 @@ export function createCounterparty(partial: Partial<Counterparty> & { id?: strin
 
   const recoveryRate = partial.recoveryRate ?? 0.40;
   if (!Number.isFinite(recoveryRate) || recoveryRate < 0 || recoveryRate >= 1) {
-    throw new Error(`Invalid recoveryRate (${recoveryRate}): must be in [0, 1) so LGD = 1 - R > 0 (Gregory Cap. 12).`);
+    throw new Error(`Invalid recoveryRate (${recoveryRate}): must be in [0, 1) so LGD = 1 - R > 0 (Cap. 12).`);
   }
 
   const sector = (partial.sector ?? '').trim();
@@ -93,10 +93,10 @@ export function createCounterparty(partial: Partial<Counterparty> & { id?: strin
   const hasValidCurve = isValidCreditCurve(partial.creditCurve);
   const hasValidProxy = isValidProxyKey(partial.proxyKey);
 
-  // Gregory Cap. 12: A counterparty without direct CDS must provide a valid proxyKey.
+  // Cap. 12: A counterparty without direct CDS must provide a valid proxyKey.
   if (!hasValidCurve && !hasValidProxy) {
     throw new Error(
-      `Counterparty "${name}" is invalid (Gregory Cap. 12 / FR-2.2): must provide either a valid creditCurve (CDS) or a complete proxyKey (rating, sector, region).`
+      `Counterparty "${name}" is invalid (Cap. 12 / FR-2.2): must provide either a valid creditCurve (CDS) or a complete proxyKey (rating, sector, region).`
     );
   }
 
@@ -127,7 +127,7 @@ export function createCounterparty(partial: Partial<Counterparty> & { id?: strin
 
 /**
  * Creates and validates a CSA (Credit Support Annex) entity.
- * Enforces Gregory Cap. 6 (thresholds, MTA, IM, rounding), Cap. 11 (MPOR >= 0),
+ * Enforces Cap. 6 (thresholds, MTA, IM, rounding), Cap. 11 (MPOR >= 0),
  * Cap. 13 (OIS collateral discounting curve & eligible currencies), Cap. 15 (segregated IM).
  */
 export function createCSA(partial: Partial<CSA> & { id?: string }): CSA {
@@ -151,7 +151,7 @@ export function createCSA(partial: Partial<CSA> & { id?: string }): CSA {
   const mta = partial.mta ?? 0;
   const initialMargin = partial.initialMargin ?? 0;
   const rounding = partial.rounding ?? 0;
-  // Gregory Cap. 8 & Cap. 11: Standard bilateral MPOR is typically 10 business days (0 if uncollateralized).
+  // Cap. 8 & Cap. 11: Standard bilateral MPOR is typically 10 business days (0 if uncollateralized).
   const mporDays = partial.mporDays ?? (type === 'NO_CSA' ? 0 : 10);
 
   if (thresholdOwn < 0 || Number.isNaN(thresholdOwn)) {
@@ -161,16 +161,16 @@ export function createCSA(partial: Partial<CSA> & { id?: string }): CSA {
     throw new Error(`Invalid thresholdCpty (${thresholdCpty}): must be >= 0.`);
   }
   if (!Number.isFinite(mta) || mta < 0) {
-    throw new Error(`Invalid MTA (${mta}): must be finite and >= 0 (Gregory Cap. 6).`);
+    throw new Error(`Invalid MTA (${mta}): must be finite and >= 0 (Cap. 6).`);
   }
   if (!Number.isFinite(initialMargin) || initialMargin < 0) {
-    throw new Error(`Invalid initialMargin (${initialMargin}): must be finite and >= 0 (Gregory Cap. 6).`);
+    throw new Error(`Invalid initialMargin (${initialMargin}): must be finite and >= 0 (Cap. 6).`);
   }
   if (!Number.isFinite(rounding) || rounding < 0) {
     throw new Error(`Invalid rounding (${rounding}): must be finite and >= 0.`);
   }
   if (!Number.isFinite(mporDays) || mporDays < 0) {
-    throw new Error(`Invalid mporDays (${mporDays}): must be finite and >= 0 (Gregory Cap. 11).`);
+    throw new Error(`Invalid mporDays (${mporDays}): must be finite and >= 0 (Cap. 11).`);
   }
 
   const eligibleCcy: Currency[] =
@@ -316,7 +316,7 @@ export function resolveEffectiveCSAId(trade: TradeBase, fallbackCsaId: string): 
 
 /**
  * Builds NettingSet entities by grouping trades by (counterpartyId, effectiveCsaId).
- * Gregory Cap. 5 & Cap. 14: The netting set is the unit of aggregation covered by a
+ * Cap. 5 & Cap. 14: The netting set is the unit of aggregation covered by a
  * specific legal netting and collateral agreement. If a trade specifies a `csaOverrideId`
  * (puntual CSA), it forms its own netting set under that CSA override; otherwise it joins
  * the counterparty's global CSA netting set.
@@ -499,7 +499,7 @@ export function validatePortfolio(portfolio: Portfolio): ValidationIssue[] {
 }
 
 /**
- * Validates MonteCarloConfig (Gregory Cap. 10, NFR-2: v1 <= 10,000 paths).
+ * Validates MonteCarloConfig (Cap. 10, NFR-2: v1 <= 10,000 paths).
  */
 export function createMonteCarloConfig(partial?: Partial<MonteCarloConfig>): MonteCarloConfig {
   const numPaths = partial?.numPaths ?? 1000;

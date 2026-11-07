@@ -3,7 +3,7 @@
  * y Wrong-Way Risk (WWR) Paramétrico.
  *
  * Referencias:
- * - Jon Gregory, "The xVA Challenge" (3rd ed., 2015):
+ * - "The xVA Challenge" (3rd ed., 2015):
  *   - Cap. 14 (CVA y DVA: formulación unilateral/bilateral y vista contable IFRS 13)
  *   - Cap. 15 (FVA: FCA y FBA; prohibición explícita de sumar DVA + FBA)
  *   - Cap. 16 (MVA sobre Initial Margin segregado y KVA sobre perfil de capital)
@@ -20,9 +20,9 @@ export interface XVASummary {
   fva: number;
   mva: number;
   kva: number;
-  /** Economic/Pricing view: -CVA - FCA + FBA (DVA strictly excluded, Gregory Cap. 15) */
+  /** Economic/Pricing view: -CVA - FCA + FBA (DVA strictly excluded, Cap. 15) */
   net_xva: number;
-  /** Accounting/Balance-sheet IFRS 13 view: -CVA + DVA (Gregory Cap. 14) */
+  /** Accounting/Balance-sheet IFRS 13 view: -CVA + DVA (Cap. 14) */
   accounting_xva: number;
   /** Economic view including MVA and KVA: -CVA - FCA + FBA - MVA - KVA (DVA excluded) */
   net_xva_all_in: number;
@@ -55,7 +55,7 @@ export interface XvaCalculationInput {
   capitalProfile?: readonly number[] | null;
   /** Costo de capital anualizado (ej. 0.10 = 10%) */
   costOfCapitalAnnual?: number;
-  /** Correlación paramétrica WWR rho in [-1, 1] (Fase 6, Gregory Cap. 17) */
+  /** Correlación paramétrica WWR rho in [-1, 1] (Fase 6, Cap. 17) */
   wwrCorrelation?: number;
   /** Escala temporal t_i para modulación de WWR (opcional) */
   times?: readonly number[] | null;
@@ -73,7 +73,7 @@ function validateSameLength(nameA: string, a: readonly number[], nameB: string, 
 /**
  * Calcula CVA por cuadratura discreta sobre los buckets temporales:
  * CVA = LGD_C * sum_i EE(t_i) * DF(t_i) * dPD_C(t_{i-1}, t_i)
- * (Gregory Cap. 14 / `compute_cva` en `xva/cva_dva_fva.py`).
+ * (Cap. 14 / `compute_cva` en `xva/cva_dva_fva.py`).
  */
 export function computeCva(
   ee: readonly number[],
@@ -97,7 +97,7 @@ export function computeCva(
 /**
  * Calcula DVA usando nuestra exposición negativa esperada ENE(t) y nuestra propia dPD:
  * DVA = LGD_B * sum_i ENE(t_i) * DF(t_i) * dPD_B(t_{i-1}, t_i)
- * (Gregory Cap. 14 / `compute_dva` en `xva/cva_dva_fva.py`).
+ * (Cap. 14 / `compute_dva` en `xva/cva_dva_fva.py`).
  */
 export function computeDva(
   ene: readonly number[],
@@ -120,9 +120,9 @@ export function computeDva(
 
 /**
  * Calcula FCA, FBA y FVA = FCA - FBA sobre perfiles EE(t) y ENE(t)
- * (Gregory Cap. 15 / `compute_fva` en `xva/cva_dva_fva.py`).
+ * (Cap. 15 / `compute_fva` en `xva/cva_dva_fva.py`).
  *
- * Nota crítica (Gregory Cap. 15): El FBA sólo surge de MTM negativo no colateralizado
+ * Nota crítica (Cap. 15): El FBA sólo surge de MTM negativo no colateralizado
  * o de Variation Margin rehipotecable; el Initial Margin segregado NUNCA genera FBA.
  */
 export function computeFva(
@@ -167,7 +167,7 @@ export function computeFva(
 /**
  * Calcula Margin Valuation Adjustment (MVA) sobre el perfil de Initial Margin segregado:
  * MVA = sum_i IM(t_i) * (s_funding - s_IM) * DF(t_i) * dt_i * S_joint(t_i)
- * (Gregory Cap. 16).
+ * (Cap. 16).
  */
 export function computeMva(
   imProfile: readonly number[],
@@ -194,9 +194,9 @@ export function computeMva(
 
 /**
  * Construye un perfil simplificado de capital económico/regulatorio EC(t_i) a partir
- * de EE(t_i) y PFE(t_i) para el cálculo pedagógico de KVA (Gregory Cap. 16).
+ * de EE(t_i) y PFE(t_i) para el cálculo pedagógico de KVA (Cap. 16).
  *
- * // SUPUESTO (no en Gregory): Aproximación lineal SA-CCR / CEM simplificada
+ * // SUPUESTO (no en ): Aproximación lineal SA-CCR / CEM simplificada
  * `EAD(t) = alpha * (0.4 * EE(t) + 0.6 * PFE(t))` con requerimiento de capital `8% * RW * EAD(t)`
  * para ilustrar KVA en el navegador sin requerir un motor RWA regulatorio completo.
  */
@@ -217,7 +217,7 @@ export function buildSimplifiedCapitalProfile(
 /**
  * Calcula Capital Valuation Adjustment (KVA) sobre el perfil de capital requerido:
  * KVA = sum_i EC(t_i) * CoC * DF(t_i) * dt_i
- * (Gregory Cap. 16).
+ * (Cap. 16).
  */
 export function computeKva(
   capitalProfile: readonly number[],
@@ -240,7 +240,7 @@ export function computeKva(
 }
 
 /**
- * Fase 6 — Wrong-Way Risk (WWR) paramétrico (Gregory Cap. 17, FR-5.1).
+ * Fase 6 — Wrong-Way Risk (WWR) paramétrico (Cap. 17, FR-5.1).
  *
  * Modela la dependencia entre la exposición y la intensidad de default de la contraparte
  * mediante el parámetro de correlación rho in [-1, 1]:
@@ -251,7 +251,7 @@ export function computeKva(
  *   incrementa la exposición condicional al default -> CVA_WWR > CVA_base.
  * - rho < 0 (Right-Way Risk) reduce la exposición condicional al default -> CVA_WWR < CVA_base.
  *
- * // SUPUESTO (no en Gregory): Parametrización exponencial cerrada con `sigmaWwr = 0.45`
+ * // SUPUESTO (no en ): Parametrización exponencial cerrada con `sigmaWwr = 0.45`
  * para escalar de forma monótona la exposición condicional al default en función de `rho in [-1, 1]`.
  */
 export function applyWwrToExposure(
@@ -274,7 +274,7 @@ export function applyWwrToExposure(
 }
 
 /**
- * Calcula CVA ajustado por Wrong-Way Risk paramétrico (Fase 6, Gregory Cap. 17).
+ * Calcula CVA ajustado por Wrong-Way Risk paramétrico (Fase 6, Cap. 17).
  */
 export function computeCvaWithWwr(
   ee: readonly number[],
@@ -290,7 +290,7 @@ export function computeCvaWithWwr(
 
 /**
  * Calcula el resumen completo de XVA respetando la regla dura anti-doble-conteo
- * (Gregory Cap. 14 y Cap. 15, AGENTS.md, FR-4.4 y FR-4.5):
+ * (Cap. 14 y Cap. 15, AGENTS.md, FR-4.4 y FR-4.5):
  *
  * - Vista económica / pricing (`net_xva`):
  *     `net_xva = -cva - fca + fba`  (excluye DVA para no duplicar el beneficio de fondeo FBA)
@@ -346,7 +346,7 @@ export function computeXvaSummary(input: XvaCalculationInput): XVASummary {
       )
     : 0;
 
-  // Regla Dura (Gregory Cap. 15 / demo.py):
+  // Regla Dura (Cap. 15 / demo.py):
   // Vista Económica (pricing): net_xva = -CVA - FCA + FBA (DVA excluido)
   const net_xva = -cva - fvaBreakdown.fca + fvaBreakdown.fba;
   // Vista Contable (IFRS 13): accounting_xva = -CVA + DVA
@@ -375,7 +375,7 @@ export function computeXvaSummary(input: XvaCalculationInput): XVASummary {
 
 /**
  * Verificador invariante que lanza error si `net_xva` incluye DVA junto con FBA
- * o si `accounting_xva` mezcla FVA con DVA (Gregory Cap. 15).
+ * o si `accounting_xva` mezcla FVA con DVA (Cap. 15).
  */
 export function assertNoDvaFbaDoubleCounting(summary: XVASummary): void {
   const expectedEconomic = -summary.cva - summary.fca + summary.fba;
@@ -383,19 +383,19 @@ export function assertNoDvaFbaDoubleCounting(summary: XVASummary): void {
 
   if (Math.abs(summary.net_xva - expectedEconomic) > 1e-9) {
     throw new Error(
-      `Double-counting violation: net_xva (${summary.net_xva}) must equal -cva - fca + fba (${expectedEconomic}) with DVA strictly excluded (Gregory Cap. 15).`,
+      `Double-counting violation: net_xva (${summary.net_xva}) must equal -cva - fca + fba (${expectedEconomic}) with DVA strictly excluded (Cap. 15).`,
     );
   }
   if (Math.abs(summary.accounting_xva - expectedAccounting) > 1e-9) {
     throw new Error(
-      `Accounting XVA violation: accounting_xva (${summary.accounting_xva}) must equal -cva + dva (${expectedAccounting}) (Gregory Cap. 14 / IFRS 13).`,
+      `Accounting XVA violation: accounting_xva (${summary.accounting_xva}) must equal -cva + dva (${expectedAccounting}) (Cap. 14 / IFRS 13).`,
     );
   }
   if (summary.dva > 0 && summary.fba > 0) {
     const forbiddenSum = -summary.cva + summary.dva - summary.fca + summary.fba;
     if (Math.abs(summary.net_xva - forbiddenSum) < 1e-9) {
       throw new Error(
-        'CRITICAL QUANT ERROR: DVA and FBA cannot be summed together in net_xva (Gregory Cap. 15 double counting).',
+        'CRITICAL QUANT ERROR: DVA and FBA cannot be summed together in net_xva (Cap. 15 double counting).',
       );
     }
   }

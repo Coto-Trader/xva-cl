@@ -1,7 +1,7 @@
 /**
  * Derivative Product Pricers & Analytical Reference Profile (Fase 3 — src/engine/pricing.ts)
  *
- * Faithful to Jon Gregory, "The xVA Challenge" (3rd ed., 2015), Chapters 7, 10 & 13:
+ * Faithful to "The xVA Challenge" (3rd ed., 2015), Chapters 7, 10 & 13:
  * - Ageing / roll-off of transactions over time (Cap. 7).
  * - Pathwise MTM valuation across the simulation grid (Cap. 10).
  * - Reproduces the reference diffusion profile and fixed-cashflow PV of `demo.py` and `sensitivities/aad.py`.
@@ -18,7 +18,7 @@ export interface CashflowItem {
 }
 
 /**
- * Generates the contractual cashflow schedule for a trade (Gregory Cap. 7 & Cap. 10).
+ * Generates the contractual cashflow schedule for a trade (Cap. 7 & Cap. 10).
  */
 export function generateTradeCashflows(trade: AnyTrade): CashflowItem[] {
   const nCoupons = Math.max(1, Math.ceil(trade.maturityYears));
@@ -104,7 +104,7 @@ export function priceFixedCashflowsLinear(
 
 /**
  * Pathwise mark-to-market valuation `V(t)` in UF terms for a trade at simulation step `point`
- * (Gregory Cap. 7 & Cap. 10).
+ * (Cap. 7 & Cap. 10).
  *
  * For `CCS_UF_CLP`:
  * - Incorporates initial FX mark-to-market (`(ufClpFxFixed - spot0) / spot0`) plus the
@@ -119,7 +119,7 @@ export function priceTradePathwiseUF(
   _curves: CurveSet,
   point: SimulatedPathPoint
 ): number {
-  // Roll-off after trade maturity (Gregory Cap. 7: ageing of transactions)
+  // Roll-off after trade maturity (Cap. 7: ageing of transactions)
   if (point.t > trade.maturityYears + 1e-9) {
     return 0.0;
   }

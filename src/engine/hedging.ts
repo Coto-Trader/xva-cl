@@ -2,7 +2,7 @@
  * Fase 7 — Motor de Recomendación de Coberturas XVA y Semáforo de Riesgo DV01.
  *
  * Referencias:
- * - Jon Gregory, "The xVA Challenge" (3rd ed., 2015):
+ * - "The xVA Challenge" (3rd ed., 2015):
  *   - Cap. 12 (Credit Spreads, Proxy Hedging para contrapartes sin CDS líquido e IFRS 13)
  *   - Cap. 14 (DVA no cubrible directamente con propio CDS; uso de proxies financieros)
  *   - Cap. 17 (Cobertura de Wrong-Way Risk y correlación exposición-crédito)
@@ -55,7 +55,7 @@ export interface HedgeRecommendation {
   estimatedHedgeCostUF: number;
   /** Regla cuantitativa explícita del libro */
   bookRule: string;
-  /** Cita del capítulo de Jon Gregory (3rd ed., 2015) */
+  /** Cita del capítulo de la literatura estándar (3rd ed., 2015) */
   bookChapter: string;
   /** Nota de criterio contable IFRS 13 vs visión económica */
   accountingNote: string;
@@ -64,7 +64,7 @@ export interface HedgeRecommendation {
 /**
  * Clasifica el DV01 de un nodo en semáforo LOW / MEDIUM / HIGH (`classify_tenor_risk` en `hedging/advisor.py`).
  *
- * // SUPUESTO (no en Gregory): Umbrales operativos `mediumThreshold = 25_000` y `highThreshold = 75_000`
+ * // SUPUESTO (no en ): Umbrales operativos `mediumThreshold = 25_000` y `highThreshold = 75_000`
  * tomados de `hedging/advisor.py`.
  */
 export function classifyTenorRisk(
@@ -168,7 +168,7 @@ export function recommendSpreadTrades(
  * Evalúa si el carry diferencial UF vs CLP supera el umbral negativo que obliga a cubrir con
  * Forward de Inflación UF (`check_forced_inflation_forward` en `hedging/advisor.py`).
  *
- * // SUPUESTO (no en Gregory): Regla operativa chilena de carry negativo UF/CLP (`maxNegativeCarryBps = -35 bps`).
+ * // SUPUESTO (no en ): Regla operativa chilena de carry negativo UF/CLP (`maxNegativeCarryBps = -35 bps`).
  */
 export function checkForcedInflationForward(
   ufCarryAnnual: number,
@@ -195,7 +195,7 @@ export interface RecommendXvaHedgesOptions {
 
 /**
  * Genera las recomendaciones de cobertura de Greeks de XVA (Vega, CS01, Rate DV01, FX Delta, Own CS01)
- * siguiendo estrictamente `docs/HEDGING-STRATEGIES.md`, FR-6.2 y FR-6.3 (Gregory Cap. 12, 14, 17, 18).
+ * siguiendo estrictamente `docs/HEDGING-STRATEGIES.md`, FR-6.2 y FR-6.3 (Cap. 12, 14, 17, 18).
  *
  * Regla clave de aceptación FR-6:
  * - Si `vega > 0` (mayor volatilidad incrementa la EE y por ende encarece el CVA):
@@ -235,7 +235,7 @@ export function recommendXvaHedges(
     estimatedHedgeCostUF: vegaCost,
     bookRule:
       'Si Vega(CVA) > 0, la exposición positiva esperada EE(t) crece con la volatilidad del subyacente; el escritorio XVA está corto volatilidad en su CVA (-CVA disminuye cuando sube sigma) y debe vender/estructurar posición de vega acorde a su convención de signo para inmunizar el P&L ante spikes de volatilidad.',
-    bookChapter: 'Jon Gregory (2015), Cap. 18 — Managing xVA (Exposure Vega & Cross-Gamma)',
+    bookChapter: 'la literatura estándar (2015), Cap. 18 — Managing xVA (Exposure Vega & Cross-Gamma)',
     accountingNote:
       'Bajo IFRS 13 el CVA debe valorizarse con volatilidades implícitas de mercado (risk-neutral) para reflejar el costo de reposición de las coberturas de vega.',
   });
@@ -263,7 +263,7 @@ export function recommendXvaHedges(
     estimatedHedgeCostUF: cs01Cost,
     bookRule:
       'El CS01 mide la sensibilidad del CVA al ensanchamiento de spreads de crédito. Cuando no existe CDS single-name líquido (caso habitual en mercado chileno), se mapea un proxy por rating, sector y región que cubre el riesgo sistémico de spread, dejando el riesgo idiosincrático (jump-to-default) sujeto a límites de PFE.',
-    bookChapter: 'Jon Gregory (2015), Cap. 12 (Credit Spreads & Proxies) y Cap. 18 (CDS Hedging)',
+    bookChapter: 'la literatura estándar (2015), Cap. 12 (Credit Spreads & Proxies) y Cap. 18 (CDS Hedging)',
     accountingNote:
       'IFRS 13 exige probabilidades de default riesgo-neutrales extraídas de spreads observables o proxies de mercado, ya que el escritorio XVA marca a mercado el costo de cubrir el CS01.',
   });
@@ -289,7 +289,7 @@ export function recommendXvaHedges(
     estimatedHedgeCostUF: rateCost,
     bookRule:
       'El DV01 del XVA combina el efecto del factor de descuento OIS y la deriva del MTM esperado del portafolio ante movimientos paralelos y de pendiente en las curvas cero.',
-    bookChapter: 'Jon Gregory (2015), Cap. 13 (Discounting & Collateral) y Cap. 18 (Managing xVA)',
+    bookChapter: 'la literatura estándar (2015), Cap. 13 (Discounting & Collateral) y Cap. 18 (Managing xVA)',
     accountingNote:
       'El descuento de la exposición colateralizada se realiza a la curva OIS de la moneda del colateral (Cheapest-to-Deliver).',
   });
@@ -315,12 +315,12 @@ export function recommendXvaHedges(
     estimatedHedgeCostUF: fxCost,
     bookRule:
       'En Cross-Currency Swaps UF/CLP la deriva inflacionaria incrementa el nocional equivalente en CLP. Cubrir mediante NDF evita el spike de riesgo de liquidación (Herstatt) de entrega física.',
-    bookChapter: 'Jon Gregory (2015), Cap. 6 (Settlement & Netting) y Cap. 18 (Market Risk Hedges)',
+    bookChapter: 'la literatura estándar (2015), Cap. 6 (Settlement & Netting) y Cap. 18 (Market Risk Hedges)',
     accountingNote:
       'Separa la cobertura del MTM libre de riesgo respecto del Delta inducido por el ajuste XVA.',
   });
 
-  // 5. Nota sobre Own CS01 (DVA) — No vendible directamente (Gregory Cap. 14 y Cap. 15)
+  // 5. Nota sobre Own CS01 (DVA) — No vendible directamente (Cap. 14 y Cap. 15)
   const ownCs01Abs = Math.abs(greeks.ownCs01);
   recs.push({
     id: 'hedge_own_cs01',
@@ -334,7 +334,7 @@ export function recommendXvaHedges(
     estimatedHedgeCostUF: ownCs01Abs * 5.0,
     bookRule:
       'Un banco no puede vender protección CDS sobre sí mismo para monetizar DVA. En pricing económico se incluye únicamente FBA y se excluye DVA para evitar el doble conteo del beneficio de fondeo propio.',
-    bookChapter: 'Jon Gregory (2015), Cap. 14 (DVA Controversy) y Cap. 15 (FVA vs DVA Double Counting)',
+    bookChapter: 'la literatura estándar (2015), Cap. 14 (DVA Controversy) y Cap. 15 (FVA vs DVA Double Counting)',
     accountingNote:
       'IFRS 13 exige reportar DVA en estados financieros (-CVA + DVA), pero la mesa de pricing cotiza net_xva = -CVA - FCA + FBA.',
   });
