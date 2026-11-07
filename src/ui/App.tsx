@@ -111,7 +111,7 @@ export const App: React.FC = () => {
               </a>
               <span>·</span>
               <a href="https://tradeai.cl" target="_blank" rel="noreferrer">
-                tradeai.cl ↗
+                Suite Trade AI ↗
               </a>
             </div>
             <div className="ecosystem-links">
